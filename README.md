@@ -6,6 +6,7 @@ Go 1.18 or later
 
 # Setup
 To setup project, either clone repo if files aren't already on local machine, then navigate to the needed directory.
+Git Repo: https://github.com/elliotsmall/Golang-PostScript-Interpreter
 
 If a Go module has not been instantiated already run the following:
 go mod init postscript
