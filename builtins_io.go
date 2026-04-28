@@ -90,3 +90,15 @@ func psObjectToDetail(obj PSObject) string {
 		return "--unknown--"
 	}
 }
+
+func opSetDynamic(interp *Interpreter) error {
+	interp.dictStack.SetLexical(false)
+	fmt.Println("scoping: dynamic")
+	return nil
+}
+
+func opSetLexical(interp *Interpreter) error {
+	interp.dictStack.SetLexical(true)
+	fmt.Println("scoping: lexical")
+	return nil
+}

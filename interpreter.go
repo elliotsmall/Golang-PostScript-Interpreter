@@ -139,6 +139,9 @@ func (interp *Interpreter) evalObject(obj PSObject) error {
 	case TypeName:
 		if fn, ok := builtins[obj.SVal]; ok {
 			if err := fn(interp); err != nil {
+				if err == ErrQuit {
+					return err
+				}
 				return fmt.Errorf("error in %s: %w", obj.SVal, err)
 			}
 		} else {
@@ -146,14 +149,16 @@ func (interp *Interpreter) evalObject(obj PSObject) error {
 			if !ok {
 				return fmt.Errorf("undefined: %s", obj.SVal)
 			}
-			fmt.Printf("looked up %s, type: %v, scope nil: %v\n", obj.SVal, found.Type, found.Scope == nil)
-
 			if found.Type == TypeArray {
-				if interp.dictStack.lexical && found.Scope != nil {
-					fmt.Printf("using captured scope, x = %v\n", found.Scope[0]["x"])
-					// swap in the captured scope, run, then restore
+				if interp.dictStack.lexical {
+					scope := found.Scope
+					if scope == nil {
+						// defined before lexical was toggled on
+						// fall back to global dict only
+						scope = []map[string]PSObject{interp.dictStack.dicts[0]}
+					}
 					saved := interp.dictStack.dicts
-					interp.dictStack.dicts = found.Scope
+					interp.dictStack.dicts = scope
 					err := interp.ExecuteObjects(found.AVal)
 					interp.dictStack.dicts = saved
 					return err

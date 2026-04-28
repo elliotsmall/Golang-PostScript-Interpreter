@@ -128,6 +128,8 @@ func opRepeat(interp *Interpreter) error {
 	return nil
 }
 
+var ErrQuit = fmt.Errorf("quit")
+
 func opQuit(interp *Interpreter) error {
-	return fmt.Errorf("quit")
+	return ErrQuit
 }

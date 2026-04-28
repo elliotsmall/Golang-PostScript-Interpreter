@@ -41,7 +41,7 @@ func runFile(interp *Interpreter, filename string) {
 
 	tokens := Tokenize(string(data))
 	err = interp.Execute(tokens)
-	if err != nil && err.Error() != "quit" {
+	if err != nil && err != ErrQuit {
 		fmt.Fprintf(os.Stderr, "error: %v\n", err)
 		os.Exit(1)
 	}
@@ -65,7 +65,7 @@ func runREPL(interp *Interpreter) {
 		if err != nil {
 			if err.Error() == "quit" {
 				fmt.Println("Exiting...")
-				break
+				return
 			}
 			fmt.Fprintf(os.Stderr, "error: %v\n", err)
 		}
